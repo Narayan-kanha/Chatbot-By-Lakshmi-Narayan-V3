@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}Chat - AI Hub{% endblock %}
+{% block content %}
+<div class="app-container">
+    <div class="settings-column">
+        <h2 class="glitch-text small" data-text="CONTROLS">CONTROLS</h2>
+        <div class="setting-item">
+            <label for="model-select">Select Model</label>
+            <select id="model-select">
+                {% if models %}
+                    {% for model in models %}
+                        <option value="{{ model }}">{{ model | replace('\\', '/') | replace('models/', '') }}</option>
+                    {% endfor %}
+                {% else %}
+                    <option disabled>No models found in /models folder</option>
+                {% endif %}
+            </select>
+        </div>
+        <div class="setting-item">
+            <label for="temp-slider">Temperature</label>
+            <input type="range" id="temp-slider" min="0.1" max="2.0" value="0.8" step="0.05">
+            <span id="temp-value">0.8</span>
+        </div>
+        <div class="setting-item">
+            <label for="tokens-slider">Max New Tokens</label>
+            <input type="range" id="tokens-slider" min="50" max="2048" value="512" step="64">
+            <span id="tokens-value">512</span>
+        </div>
+        <button id="clear-button">Clear Chat</button>
+    </div>
+    <div class="chat-column">
+        <h2 class="glitch-text small" data-text="CONVERSATION">CONVERSATION</h2>
+        <div id="chat-window"></div>
+        <div id="chat-input-area">
+            <textarea id="message-input" placeholder="Type a message and press Enter..."></textarea>
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sendButton = document.getElementById('send-button');
+        const messageInput = document.getElementById('message-input');
+        const chatWindow = document.getElementById('chat-window');
+        const modelSelect = document.getElementById('model-select');
+        const tempSlider = document.getElementById('temp-slider');
+        const tempValue = document.getElementById('temp-value');
+        const tokensSlider = document.getElementById('tokens-slider');
+        const tokensValue = document.getElementById('tokens-value');
+        const clearButton = document.getElementById('clear-button');
+
+        // Update slider value displays
+        tempSlider.oninput = () => tempValue.textContent = tempSlider.value;
+        tokensSlider.oninput = () => tokensValue.textContent = tokensSlider.value;
+        
+        // Function to send message
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            // Display user message
+            const userBubble = document.createElement('div');
+            userBubble.className = 'chat-bubble user';
+            userBubble.textContent = message;
+            chatWindow.appendChild(userBubble);
+            messageInput.value = '';
+
+            // Display thinking indicator
+            const botBubble = document.createElement('div');
+            botBubble.className = 'chat-bubble bot';
+            botBubble.innerHTML = '<span class="thinking-dot"></span><span class="thinking-dot"></span><span class="thinking-dot"></span>';
+            chatWindow.appendChild(botBubble);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        message: message,
+                        model_path: modelSelect.value,
+                        temperature: tempSlider.value,
+                        max_tokens: tokensSlider.value
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.statusText}`);
+                }
+                const data = await response.json();
+                botBubble.textContent = data.response; // Update with real response
+            } catch (error) {
+                botBubble.textContent = `An error occurred: ${error.message}`;
+                botBubble.style.background = '#d93a3a';
+            }
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        sendButton.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        clearButton.addEventListener('click', () => {
+            chatWindow.innerHTML = '';
+        });
+    });
+</script>
+{% endblock %}

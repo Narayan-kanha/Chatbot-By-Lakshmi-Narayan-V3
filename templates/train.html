@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Train Hub - AI Hub{% endblock %}
+
+{% block content %}
+<div class="app-container">
+
+    <!-- Pass the server-side boolean into a data attribute, which is always safe. -->
+    <body data-is-training="{{ is_training | tojson }}">
+
+    <div class="settings-column">
+        <h2 class="glitch-text small" data-text="MISSION CONTROL">MISSION CONTROL</h2>
+        <div class="setting-item">
+            <label>Current Status:</label>
+            <span id="status-indicator">Initializing...</span>
+        </div>
+        <button id="start-training-btn">🚀 LAUNCH EXPEDITION</button>
+        <button id="stop-training-btn" class="stop-button">🛑 ABORT MISSION</button>
+        <div class="setting-item info-box">
+            <p><strong>LAUNCH:</strong> Begins the training from `nano_gpt_train.py`.</p>
+            <p><strong>ABORT:</strong> Sends a graceful shutdown, saving a checkpoint.</p>
+        </div>
+    </div>
+
+    <div class="chat-column">
+        <h2 class="glitch-text small" data-text="LIVE TELEMETRY">LIVE TELEMETRY</h2>
+        <pre id="log-output" class="log-console"></pre>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const socket = io();
+        const startBtn = document.getElementById('start-training-btn');
+        const stopBtn = document.getElementById('stop-training-btn');
+        const logOutput = document.getElementById('log-output');
+        const statusIndicator = document.getElementById('status-indicator');
+
+        function setTrainingState(isTraining) {
+            startBtn.disabled = isTraining;
+            stopBtn.disabled = !isTraining;
+            statusIndicator.textContent = isTraining ? 'Training in Progress...' : 'Idle / Ready';
+            statusIndicator.className = isTraining ? 'status-indicator status-training' : 'status-indicator status-idle';
+        }
+
+        startBtn.addEventListener('click', () => { logOutput.innerHTML = ''; socket.emit('start_training'); });
+        stopBtn.addEventListener('click', () => { if (confirm('Are you sure? A checkpoint will be saved.')) { socket.emit('stop_training'); } });
+        
+        socket.on('training_started', function(msg) { setTrainingState(true); logOutput.innerHTML += `<span class="log-info">${msg.data}\n</span>`; });
+        socket.on('training_update', function(msg) { logOutput.textContent += msg.data; logOutput.scrollTop = logOutput.scrollHeight; });
+        socket.on('training_finished', function(msg) { setTrainingState(false); logOutput.innerHTML += `<span class="log-success">${msg.data}\n</span>`; });
+        socket.on('training_error', function(msg) { setTrainingState(false); logOutput.innerHTML += `<span class="log-error">ERROR: ${msg.error}\n</span>`; });
+        
+        // --- THIS IS THE FINAL, UNBREAKABLE FIX ---
+        // Read the boolean value safely from the data attribute.
+        // The '===' true' is crucial to convert the string 'true' into a real boolean.
+        const initialTrainingState = document.body.dataset.isTraining === 'true';
+        setTrainingState(initialTrainingState);
+        // ---------------------------------------------
+    });
+</script>
+{% endblock %}

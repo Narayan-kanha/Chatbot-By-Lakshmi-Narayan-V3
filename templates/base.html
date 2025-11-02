@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI Hub{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="grid-bg"></div><div class="gradient-overlay"></div>
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="logo-link"><span class="logo-text">NAIO HUB</span></a>
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}" class="nav-link {% if request.path == '/' %}active{% endif %}">Dashboard</a>
+                <a href="{{ url_for('chat_page') }}" class="nav-link {% if 'chat' in request.path %}active{% endif %}">Chat</a>
+                <a href="{{ url_for('train_page') }}" class="nav-link {% if 'train' in request.path %}active{% endif %}">Train</a>
+            </div>
+        </div>
+    </nav>
+    <main class="content-wrapper">
+        {% block content %}{% endblock %}
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
