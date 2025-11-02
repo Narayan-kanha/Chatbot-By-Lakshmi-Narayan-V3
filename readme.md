@@ -49,14 +49,42 @@ This chatbot needs some special Python libraries to work. I've listed them in a 
 pip install -r requirements.txt
 ```
 
+### Step 4: Tokenize all the data
+
+Before you can train the bot, you need to tokenize so it the proccess is faster.
+
+*   Run the `tokenize_data.py` script with this command:
+
+```bash
+python tokenize_data.py
+```
+Wait for the tokenizing to finish. You'll see some output in the terminal as it tokenizes.
+
+This should be the output after SOME time:
+
+``` Bash
+PS D:\path\to\your\project> py tokenize_data.py  
+--- Starting memory-efficient data processing for 'ULTIMATE_DATASET.txt' ---
+
+--- Pass 1: Building vocabulary and counting characters ---
+Reading file:  97%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉    | 9.05G/9.29G [02:21<00:03, 63.8MB/s]
+Successfully read 8,822,514,810 characters.
+Vocabulary size: 61576 unique characters.
+Successfully saved the master dictionary to 'meta.pkl'.
+
+--- Pass 2: Tokenizing and creating binary split files ---
+Splitting data into 70.0% train (6,175,760,367 tokens) and 30% validation (2,646,754,443 tokens).
+Tokenizing:   5%|███████▌                                                                                                                                         | 458219520/8822514810 [05:25<1:11:59, 1936536.61char/s]
+```
+
 ### Step 4: Train the Chatbot
 
 Before you can chat, you need to train the bot so it knows how to talk.
 
-*   Run the `train.py` script with this command:
+*   Run the `pico_gpt_train.py` script with this command:
 
 ```bash
-python train.py
+python pico_gpt_train.py
 ```
 Wait for the training to finish. You'll see some output in the terminal as it learns.
 
@@ -67,7 +95,7 @@ You're all set! Now you can run the main program and start talking to your new c
 *   Run this final command:
 
 ```bash
-python main.py
+python App.py
 ```
 
 The chatbot will greet you. Type your message and press Enter to have a conversation!
@@ -75,4 +103,6 @@ The chatbot will greet you. Type your message and press Enter to have a conversa
 ---
 If you need a model file, data or anything like that, please mail me at `lakshminarayan.mcs@gmail.com`
 If i do not respond (most probably... I would be at school, or preparing for my exams...) please send a small email again... at `lakshminarayan108.yt@gmail.com`
+
+
 Thanks a lot for checking out my project. Have fun chatting! 🎉                     
