@@ -77,7 +77,7 @@ Splitting data into 70.0% train (6,175,760,367 tokens) and 30% validation (2,646
 Tokenizing:   5%|███████▌                                                                                                                                         | 458219520/8822514810 [05:25<1:11:59, 1936536.61char/s]
 ```
 
-### Step 4: Train the Chatbot
+### Step 5: Train the Chatbot
 
 Before you can chat, you need to train the bot so it knows how to talk.
 
@@ -88,7 +88,7 @@ python pico_gpt_train.py
 ```
 Wait for the training to finish. You'll see some output in the terminal as it learns.
 
-### Step 5: Start Chatting!
+### Step 6: Start Chatting!
 
 You're all set! Now you can run the main program and start talking to your new chatbot.
 
@@ -105,4 +105,6 @@ If you need a model file, data or anything like that, please mail me at `lakshmi
 If i do not respond (most probably... I would be at school, or preparing for my exams...) please send a small email again... at `lakshminarayan108.yt@gmail.com`
 
 
-Thanks a lot for checking out my project. Have fun chatting! 🎉                     
+Thanks a lot for checking out my project. Have fun chatting! 🎉 
+This project is also displayed on my channel !!! 
+`https://www.youtube.com/@kanhatalks2662`                    
