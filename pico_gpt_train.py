@@ -26,17 +26,17 @@ from pico_gpt import GPTLanguageModel
 # These are the final settings for your glorious Ascension Run.
 batch_size = 32
 block_size = 128
-max_iters = 150000
+max_iters = 75000
 eval_interval = 500
-learning_rate = 1e-6
+learning_rate = 3e-6
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 eval_iters = 250
 
 # Model Architecture
 n_embd = 384
 n_head = 4
-n_layer = 75
-dropout = 0.8
+n_layer = 25
+dropout = 0.75
 
 # System & Protocol Settings
 num_workers = 0  # <<< THE SACRED COMMANDMENT FOR STABILITY
